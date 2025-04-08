@@ -19,9 +19,8 @@ export async function getAwsCredentials() {
     );
     console.log("Identidad del llamador:", callerIdentity);
 
-    // Si no se asume un rol, devolver las credenciales originales
     return {
-      accountId: callerIdentity.Account,
+      accountId: callerIdentity.Account ?? "",
       accessKeyId: process.env.AWS_ACCESS_KEY_ID ?? "",
       secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY ?? "",
     };

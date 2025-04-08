@@ -9,6 +9,7 @@
     "dev": "ts-node-dev --respawn src/main.ts",
     "cdk": "cdk",
     "cdk:deploy": "cdk deploy",
+    "cdk:bootstrap": "cdk bootstrap",
     "cdk:destroy": "cdk destroy",
     "cdk:synth": "cdk synth"
   },
