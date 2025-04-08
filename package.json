@@ -9,7 +9,7 @@
     "build:all": "pnpm build && pnpm bundle:lambda",
     "bundle:lambda": "node scripts/bundle-lambda.js",
     "package:lambda": "./scripts/package-lambda.sh",
-    "deploy": "pnpm build:all && pnpm package:lambda && cdk deploy",
+    "deploy": "pnpm build && cdk deploy",
     "start": "nest start",
     "dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
@@ -20,7 +20,9 @@
   "license": "ISC",
   "packageManager": "pnpm@10.7.1",
   "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.0.0",
     "@aws-sdk/client-sts": "^3.0.0",
+    "@aws-sdk/lib-dynamodb": "^3.0.0",
     "@codegenie/serverless-express": "^4.0.0",
     "@nestjs/cli": "^10.0.0",
     "@nestjs/common": "^10.0.0",

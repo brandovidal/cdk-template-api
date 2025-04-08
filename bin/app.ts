@@ -1,7 +1,7 @@
 import * as cdk from "aws-cdk-lib";
 
 import { getAwsCredentials } from "../lib/aws-crendetials";
-import { ApiStack } from "./stack";
+import { DynamoDbStack } from "./dynamodb-stack";
 
 async function main() {
   try {
@@ -9,7 +9,7 @@ async function main() {
 
     const app = new cdk.App();
 
-    new ApiStack(app, "QuotationApiLambdaStack", {
+    new DynamoDbStack(app, "QuotationDynamoDbStack", {
       credentials,
     });
   } catch (error) {
