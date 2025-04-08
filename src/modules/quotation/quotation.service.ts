@@ -1,24 +1,21 @@
-import { Injectable } from '@nestjs/common';
-import { Quotation, CreateQuotationDto, UpdateQuotationDto } from './quotation.types';
-import { ValidationService } from './validations/validation.service';
+import { Injectable } from "@nestjs/common";
+
+import { CreateQuotationRequestDto, UpdateQuotationRequestDto } from "./dto/quotation-request.dto";
+import { Quotation } from "./entities/quotation.dto";
 
 @Injectable()
 export class QuotationService {
-  constructor(private readonly validationService: ValidationService) {}
-
   private quotations: Quotation[] = [];
 
   async findAll(): Promise<Quotation[]> {
     return this.quotations;
   }
 
-  async create(quotationData: CreateQuotationDto): Promise<Quotation> {
-    const validatedData = this.validationService.validateCreateQuotation(quotationData);
-
+  async create(quotationData: CreateQuotationRequestDto): Promise<Quotation> {
     const newQuotation: Quotation = {
       id: Date.now().toString(),
-      ...validatedData,
-      status: 'pending',
+      ...quotationData,
+      status: "pending",
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -26,16 +23,16 @@ export class QuotationService {
     return newQuotation;
   }
 
-  async update(id: string, updateData: UpdateQuotationDto): Promise<Quotation | null> {
-    // Validar los datos de actualización
-    const validatedData = this.validationService.validateUpdateQuotation(updateData);
-
-    const index = this.quotations.findIndex(q => q.id === id);
+  async update(
+    id: string,
+    updateData: UpdateQuotationRequestDto
+  ): Promise<Quotation | null> {
+    const index = this.quotations.findIndex((q) => q.id === id);
     if (index === -1) return null;
 
     const updatedQuotation = {
       ...this.quotations[index],
-      ...validatedData,
+      ...updateData,
       updatedAt: new Date(),
     };
     this.quotations[index] = updatedQuotation;
@@ -43,6 +40,6 @@ export class QuotationService {
   }
 
   async findById(id: string): Promise<Quotation | null> {
-    return this.quotations.find(q => q.id === id) || null;
+    return this.quotations.find((q) => q.id === id) || null;
   }
 }

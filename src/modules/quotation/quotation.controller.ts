@@ -1,6 +1,8 @@
-import { Controller, Get, Post, Body, Param, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Patch } from '@nestjs/common';
 import { QuotationService } from './quotation.service';
-import { CreateQuotationDto, UpdateQuotationDto, Quotation } from './quotation.types';
+
+import { CreateQuotationRequestDto, UpdateQuotationRequestDto } from './dto/quotation-request.dto';
+import { Quotation } from './entities/quotation.dto';
 
 @Controller('quotations')
 export class QuotationController {
@@ -17,14 +19,14 @@ export class QuotationController {
   }
 
   @Post()
-  async createQuotation(@Body() quotationData: CreateQuotationDto): Promise<Quotation> {
+  async createQuotation(@Body() quotationData: CreateQuotationRequestDto): Promise<Quotation> {
     return this.quotationService.create(quotationData);
   }
 
-  @Put(':id')
+  @Patch(':id')
   async updateQuotation(
     @Param('id') id: string,
-    @Body() updateData: UpdateQuotationDto,
+    @Body() updateData: UpdateQuotationRequestDto,
   ): Promise<Quotation | null> {
     return this.quotationService.update(id, updateData);
   }

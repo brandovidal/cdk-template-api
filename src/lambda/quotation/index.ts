@@ -1,6 +1,6 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { QuotationService } from '../../modules/quotation/quotation.service';
-import { CreateQuotationDto, UpdateQuotationDto } from '../../modules/quotation/quotation.types';
+import { CreateQuotationRequestDto, UpdateQuotationRequestDto } from '../../modules/quotation/dto/quotation-request.dto';
 import { ValidationService } from '../../modules/quotation/validations/validation.service';
 import { BadRequestException } from '@nestjs/common';
 
@@ -33,7 +33,7 @@ const handleGet = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyRe
 
 const handlePost = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   try {
-    const quotationData: CreateQuotationDto = JSON.parse(event.body || '{}');
+    const quotationData: CreateQuotationRequestDto = JSON.parse(event.body || '{}');
     const newQuotation = await quotationService.create(quotationData);
     return {
       statusCode: 201,
@@ -67,7 +67,7 @@ const handlePut = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyRe
       };
     }
 
-    const updateData: UpdateQuotationDto = JSON.parse(event.body || '{}');
+    const updateData: UpdateQuotationRequestDto = JSON.parse(event.body || '{}');
     const updatedQuotation = await quotationService.update(id, updateData);
 
     if (!updatedQuotation) {
