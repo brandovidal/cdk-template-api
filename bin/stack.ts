@@ -19,13 +19,14 @@ export class ApiStack extends cdk.Stack {
     // Crear Lambda function
     const quotationLambda = new lambda.Function(this, 'QuotationLambda', {
       runtime: lambda.Runtime.NODEJS_20_X,
-      handler: 'lambda/bootstrap.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, '../dist'), {
-        exclude: ['cdk.out', 'node_modules'],
-      }),
+      handler: 'bundle.handler',
+      code: lambda.Code.fromAsset(path.join(__dirname, '../lambda-package.zip')),
       timeout: cdk.Duration.seconds(30),
       memorySize: 256,
       architecture: lambda.Architecture.ARM_64,
+      environment: {
+        NODE_ENV: 'production'
+      }
     });
 
     // Crear API Gateway
