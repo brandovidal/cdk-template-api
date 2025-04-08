@@ -10,14 +10,14 @@
     "cdk": "cdk",
     "cdk:deploy": "cdk deploy",
     "cdk:destroy": "cdk destroy",
-    "cdk:synth": "cdk synth",
-    "test": "jest"
+    "cdk:synth": "cdk synth"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.7.1",
   "dependencies": {
+    "@aws-sdk/client-sts": "^3.782.0",
     "@nestjs/common": "^10.0.0",
     "@nestjs/core": "^10.0.0",
     "@nestjs/platform-express": "^10.0.0",

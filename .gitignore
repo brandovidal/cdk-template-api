@@ -1,5 +1,18 @@
-node_modules
+# Dependencies
+node_modules/
 
+# Environment variables
+.env*
+
+# Build output
 dist/
+build/
 
-.env
+# Testing
+coverage/
+
+# CDK
+.cdk.staging/
+cdk.out/
+
+pnpm-lock.yaml
