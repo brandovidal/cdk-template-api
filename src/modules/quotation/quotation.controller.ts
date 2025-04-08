@@ -1,23 +1,31 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put } from '@nestjs/common';
 import { QuotationService } from './quotation.service';
-import { CreateQuotationDto } from './dto/create-quotation.dto';
+import { CreateQuotationDto, UpdateQuotationDto, Quotation } from './quotation.types';
 
 @Controller('quotations')
 export class QuotationController {
   constructor(private readonly quotationService: QuotationService) {}
 
-  @Post()
-  create(@Body() createQuotationDto: CreateQuotationDto) {
-    return this.quotationService.create(createQuotationDto);
-  }
-
   @Get()
-  findAll() {
+  async getAllQuotations(): Promise<Quotation[]> {
     return this.quotationService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.quotationService.findOne(id);
+  async getQuotationById(@Param('id') id: string): Promise<Quotation | null> {
+    return this.quotationService.findById(id);
+  }
+
+  @Post()
+  async createQuotation(@Body() quotationData: CreateQuotationDto): Promise<Quotation> {
+    return this.quotationService.create(quotationData);
+  }
+
+  @Put(':id')
+  async updateQuotation(
+    @Param('id') id: string,
+    @Body() updateData: UpdateQuotationDto,
+  ): Promise<Quotation | null> {
+    return this.quotationService.update(id, updateData);
   }
 }
