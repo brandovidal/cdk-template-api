@@ -1,13 +1,10 @@
-import * as cdk from "aws-cdk-lib";
-import * as lambda from "aws-cdk-lib/aws-lambda";
-import * as apigateway from "aws-cdk-lib/aws-apigateway";
+import * as cdk from 'aws-cdk-lib';
+import * as lambda from 'aws-cdk-lib/aws-lambda';
+import * as apigateway from 'aws-cdk-lib/aws-apigateway';
+import * as path from 'path';
+import { Construct } from 'constructs';
 
-import * as dotenv from "dotenv";
-import { Construct } from "constructs";
-
-dotenv.config();
-
-interface ApiStackProps extends cdk.StackProps {
+interface ApiLambdaStackProps extends cdk.StackProps {
   credentials?: {
     accessKeyId: string;
     secretAccessKey: string;
@@ -16,51 +13,52 @@ interface ApiStackProps extends cdk.StackProps {
 }
 
 export class ApiStack extends cdk.Stack {
-  constructor(scope: Construct, id: string, props?: ApiStackProps) {
+  constructor(scope: Construct, id: string, props?: ApiLambdaStackProps) {
     super(scope, id, props);
 
-    const quotationLambda = new lambda.Function(this, "QuotationLambda", {
+    // Crear Lambda function
+    const quotationLambda = new lambda.Function(this, 'QuotationLambda', {
       runtime: lambda.Runtime.NODEJS_20_X,
-      handler: "index.handler",
-      code: lambda.Code.fromAsset("dist/lambda/quotation"),
+      handler: 'lambda/bootstrap.handler',
+      code: lambda.Code.fromAsset(path.join(__dirname, '../dist'), {
+        exclude: ['cdk.out', 'node_modules'],
+      }),
       timeout: cdk.Duration.seconds(30),
       memorySize: 256,
+      architecture: lambda.Architecture.ARM_64,
     });
 
-    const api = new apigateway.RestApi(this, "QuotationApi", {
-      restApiName: "Quotation Service",
-      description: "API para el servicio de cotizaciones",
+    // Crear API Gateway
+    const api = new apigateway.RestApi(this, 'QuotationApi', {
+      restApiName: 'Quotation Service',
+      description: 'API para el servicio de cotizaciones',
       deployOptions: {
-        stageName: "dev",
+        stageName: 'dev',
+      },
+      defaultCorsPreflightOptions: {
+        allowOrigins: apigateway.Cors.ALL_ORIGINS,
+        allowMethods: apigateway.Cors.ALL_METHODS,
       },
     });
 
-    // Crear recurso y métodos para quotations
-    const quotations = api.root.addResource("quotations");
-    quotations.addMethod(
-      "GET",
-      new apigateway.LambdaIntegration(quotationLambda)
-    );
-    quotations.addMethod(
-      "POST",
-      new apigateway.LambdaIntegration(quotationLambda)
-    );
+    // Integrar Lambda con API Gateway
+    const lambdaIntegration = new apigateway.LambdaIntegration(quotationLambda, {
+      proxy: true,
+    });
 
-    // Crear recurso para quotation individual
-    const quotation = quotations.addResource("{id}");
-    quotation.addMethod(
-      "GET",
-      new apigateway.LambdaIntegration(quotationLambda)
-    );
-    quotation.addMethod(
-      "PUT",
-      new apigateway.LambdaIntegration(quotationLambda)
-    );
+    // Configurar rutas
+    const quotations = api.root.addResource('quotations');
+    quotations.addMethod('GET', lambdaIntegration);
+    quotations.addMethod('POST', lambdaIntegration);
+
+    const quotation = quotations.addResource('{id}');
+    quotation.addMethod('GET', lambdaIntegration);
+    quotation.addMethod('PUT', lambdaIntegration);
 
     // Outputs
-    new cdk.CfnOutput(this, "ApiUrl", {
+    new cdk.CfnOutput(this, 'ApiUrl', {
       value: api.url,
-      description: "URL de la API Gateway",
+      description: 'URL de la API Gateway',
     });
   }
 }

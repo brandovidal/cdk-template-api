@@ -9,7 +9,7 @@ async function main() {
 
     const app = new cdk.App();
 
-    new ApiStack(app, "QuotationApiStack", {
+    new ApiStack(app, "QuotationApiLambdaStack", {
       credentials,
     });
   } catch (error) {
